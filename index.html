@@ -12,13 +12,32 @@
         miJuego=new Juego();
         miJuego.agregarUsuario("pepe");
         miJuego.agregarUsuario("luis");
-       /* usr1=miJuego.usuarios["pepe"];
-        usr2=miJuego.usuarios["luis"];
-        let codigo=usr1.crearPartida();
-        usr2.uniserAPartida(codigo);*/
+
         let res=miJuego.jugadorCreaPartida("pepe");
         miJuego.jugadorSeUneAPartida("luis",res.codigo);
+
+        let us1=miJuego.obteenrUsuario("pepe");
+        let us2=miJuego.obteenrUsuario("luis");
         let partida=miJuego.obtenerPartida(res.codigo);
+
+
+        us1.colocarBarco("b2",0,0) //0,0 1,0
+        us1.colocarBarco("b4",0,1) //0,1 1,1 1,2 1,3
+        us1.barcosDesplegados();
+
+        us2.colocarBarco("b2",0,0) //0,0 1,0
+        us2.colocarBarco("b4",0,1) //0,0,1,0
+        us2.barcosDesplegados();
+
+	    us1.disparar(0,0);
+	    us1.disparar(1,0);
+
+	    us1.disparar(0,1);
+	    us1.disparar(1,1);
+	    us1.disparar(2,1);
+	    us1.disparar(3,1);
+
+
     </script>
 </body>
 

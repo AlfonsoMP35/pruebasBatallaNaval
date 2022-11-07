@@ -6,13 +6,13 @@ describe("Player", function() {
     miJuego=new Juego();
     miJuego.agregarUsuario("pepe");
     miJuego.agregarUsuario("luis");
-    usr1=miJuego.usuarios["pepe"];
-    usr2=miJuego.usuarios["luis"];
+    miJuego.jugadorSeUneAPartida("luis",res.codigo);
+    usr1=miJuego.obtenerUsuario("pepe");
+    usr2=miJuego.obtenerUsuario("luis");
+    partida=miJuego.obtenerPartida(res.codigo);
   });
 
   it("inicialmente", function() {
-    let lista=miJuego.obtenerPartidas();
-    expect(lista.length).toEqual(0);
     expect(usr1.nick).toEqual("pepe");
     expect(usr2.nick).toEqual("luis");
 
@@ -25,12 +25,8 @@ describe("Player", function() {
   });
 
   it("En partida (fase jugando)", function () {
-    let codigo=usr1.crearPartida();
-    miJuego.unirseAPartida(codigo,usr2);
-    let partida=miJuego.partidas[codigo];
-    expect(partida.jugadores.length).toEqual(2);
-
-
+    expect(partida.estoy("pepe")).toBeTrue();
+    expect(partida.estoy("luis")).toBeTrue();
 
   });
 
