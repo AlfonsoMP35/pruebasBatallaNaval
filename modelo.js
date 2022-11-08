@@ -82,7 +82,7 @@ function Juego(){
      * @param {String} usr Nombre del usuario
      * @returns {object} Union a partida
      */
-    this.unirseAPartida=function(codigo,usr){
+    this.unirAPartida=function(codigo,usr){
         let res=-1;
         if(this.partidas[codigo]){
             res = this.partidas[codigo].agregarJugador(usr);
@@ -104,7 +104,7 @@ function Juego(){
         let res = {"codigo":-1};
       
         if(usr){
-          let valor = usr.unirseAPartida(codigo);
+          let valor = usr.unirAPartida(codigo);
           //let valor = this.unirseAPartida(codigo,usr);
           res={"codigo":valor};         
         }
@@ -219,15 +219,15 @@ function Usuario(nick,juego){
         //this.flota.push(new Barco("b2",2));
        // this.flota.push(new Barco("b4",4));
         this.flota["b2"] = new Barco("b2",2);
-        this.flota["b4"] = new Barco("b4",2);
+        this.flota["b4"] = new Barco("b4",4);
         //otros barcos ...
     }
 
     /**
-     * Colocla el barco en las posición indicada teniendo en cuenta su tamaño.
+     * Coloca el barco en las posición indicada teniendo en cuenta su tamaño.
      * Las posiciones del barco pueden ser fijas o predefinidas, aleatorias, creadas por el usuario...
      */
-    this.colocarBarco=function(){
+    this.colocarBarco=function(nombre,x,y){
         if (partida.fase=="desplegando"){
             let barco=this.flota[nombre];
             this.tableroPropio.colocarBarco(barco,x,y);
@@ -297,6 +297,15 @@ function Usuario(nick,juego){
         }
     }
 
+    this.flotaHundida=function(){
+		for(var key in this.flota){
+			if (this.flota[key].estado!="hundido"){
+				return false;
+			}
+		}
+		return true;
+	}
+
 }
 
 /////////////////////////////////////////////////////////////////////////
@@ -309,6 +318,7 @@ function Partida(codigo, usr){
     this.jugadores=[];
     this.fase="inicial"; //new Inicial()
     this.maxJugadores = 2;
+    this.turno;
 
     /**
      * Agrega al usuario si hay hueco en la partida.
@@ -372,12 +382,20 @@ function Partida(codigo, usr){
         return this.fase=="jugando";
     }
 
+    this.esDesplegando=function(){
+        return this.fase=="desplegando";
+    }
+
+    this.esFinal=function(){
+        return this.fase=="final";
+    }
+
     /**
      * Comprueba que todos los barcos han sido colocados.
      * @returns {boolean} Barcos colocados
      */
     this.flotasDesplegadas=function(){
-        for(i=0;i<this.jugadroes.length();i++){
+        for(i=0;i<this.jugadores.length;i++){
             if(!this.jugadores[i].todosDesplegados()){
                 return false;
             }
@@ -420,7 +438,7 @@ function Partida(codigo, usr){
         let jugador;
         for(i=0; i<this.jugadores.length; i++){
             if(this.jugadores[i].nick==nick){
-                jugador=this.jugadores[i];
+                return this.jugadores[i];
             }
         }
         return jugador;
@@ -435,7 +453,7 @@ function Partida(codigo, usr){
         let rival;
         for(i=0; i<this.jugadores.length; i++){
             if(this.jugadores[i].nick!=nick){
-                rival=this.jugadores[i];
+                return this.jugadores[i];
             }
         }
         return rival;
@@ -448,12 +466,15 @@ function Partida(codigo, usr){
      * @param {int} y Posicion y
      */
     this.disparar=function(nick,x,y){
-        let atacante=this.obtenerJugador();
+        let atacante=this.obtenerJugador(nick);
+        console.log("Atacante: " +atacante.nick);
         if(this.turno.nick==atacante.nick){
             let atacado=this.obtenerRival(nick);
+            console.log("Atacado: " +atacado.nick);
             atacado.meDisparan(x,y);
             let estado=atacado.obtenerEstado(x,y);
-            atacante.marcarEstao(estado,x,y);
+            console.log("Estado: " + estado)
+            atacante.marcarEstado(estado,x,y);
             this.comprobarFin(atacado);
         }
         else{
@@ -494,7 +515,7 @@ function Partida(codigo, usr){
     function Final(){
         this.nombre="final";
     }
-
+}
     /////////////////////////////////////////////////////////////////////////
     //TABLERO
     /////////////////////////////////////////////////////////////////////////
@@ -541,13 +562,14 @@ function Partida(codigo, usr){
         * @param {int} y Posicion y
          * @returns {boolean} Casilla libre
          */
-        this.casillasLibres=function(x,y){
+        this.casillasLibres=function(x,y,tam){
             for(i=x;i<tam;i++){
                 let contiene=this.casillas[i][y].contiene;
                 if(!contiene.esAgua()){
                     return false;
                 }
             }
+            return true;
         }
 
         /**
@@ -676,13 +698,9 @@ function Partida(codigo, usr){
          * Pone el estado en "agua".
          */
         this.obtenerEstado=function(){
-            this.estado="agua";
+            return "agua";
         }
     }
 
-
-
-
-}
 
 //module.exports.Juego = Juego; //Super objeto

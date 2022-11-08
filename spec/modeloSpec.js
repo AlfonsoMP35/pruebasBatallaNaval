@@ -66,67 +66,68 @@ describe("Player", function() {
     expect(partida.esDesplegando()).toBeTrue();
   });
 
-});
 
-describe("A jugar", function (){
-  var miJuego;
-  var usr1,usr2;
-
-
-  beforeEach(function(){
-    miJuego=new Juego();
-    miJuego.agregarUsuario("pepe");
-    miJuego.agregarUsuario("luis");
-    let res=miJuego.jugadorCreaPartida("pepe");
-    miJuego.jugadorSeUneAPartida("luis",res.codigo);
-    usr1=miJuego.obtenerUsuario("pepe");
-    usr2=miJuego.obtenerUsuario("luis");
-    partida=miJuego.obtenerPartida(res.codigo);
-
-    usr1.colocarBarco("b2",0,0) //0,0 1,0
-    usr1.colocarBarco("b4",0,1) //0,1 1,1 1,2 1,3
-    usr1.barcosDesplegados();
-
-    usr2.colocarBarco("b2",0,0) //0,0 1,0
-    usr2.colocarBarco("b4",0,1) //0,1 1,1 1,2 1,3
-    usr2.barcosDesplegados();
+  describe("A jugar", function (){
+  
+    beforeEach(function(){
+      usr1.colocarBarco("b2",0,0) //0,0 1,0
+      usr1.colocarBarco("b4",0,1) //0,1 1,1 1,2 1,3
+      usr1.barcosDesplegados();
+  
+      usr2.colocarBarco("b2",0,0) //0,0 1,0
+      usr2.colocarBarco("b4",0,1) //0,1 1,1 1,2 1,3
+      usr2.barcosDesplegados();
+    });
+  
+  
+    it("Comprobar que las flotas están desplegadas", function() {
+      expect(usr1.todosDesplegados()).toBeTrue();
+      expect(usr2.todosDesplegados()).toBeTrue();
+      expect(partida.flotasDesplegadas()).toBeTrue();
+  
+  
+    });
+  
+    it("Comprobar jugada que Pepe gana", function() {
+      expect(partida.turno.nick).toEqual("pepe");
+  
+      expect(usr2.flota["b2"].estado).toEqual("intacto");
+      usr1.disparar(0,0);
+      expect(usr2.flota["b2"].estado).toEqual("tocado");
+      usr1.disparar(1,0);
+      expect(usr2.flota["b2"].estado).toEqual("hundido");
+  
+      expect(usr2.flota["b4"].estado).toEqual("intacto");
+      usr1.disparar(0,1);
+      expect(usr2.flota["b4"].estado).toEqual("tocado");
+      usr1.disparar(1,1);
+      expect(usr2.flota["b4"].estado).toEqual("tocado");
+      usr1.disparar(2,1);
+      expect(usr2.flota["b4"].estado).toEqual("tocado");
+      usr1.disparar(3,1);
+      expect(usr2.flota["b4"].estado).toEqual("hundido");
+  
+      expect(partida.esFinal()).toBeTrue();
+      expect(usr2.flotaHundida()).toBeTrue();
+      expect(usr1.flotaHundida()).toBeFalse();
+  
+    });
+  
+    it("Comprobar el cambio de turno", function() {
+      usr1.disparar(3,0);
+      expect(partida.turno.nick).toEqual("luis");
+  
+    });
+  
+    it("Comprobar que no deja disparar sin turno",function(){
+      usr2.disparar(0,0);
+      expect(usr1.flota["b2"].estado).toEqual("intacto");
+    });
+  
   })
 
 
-  it("Comprobar que las flotas están desplegadas", function() {
-    expect(usr1.todosDesplegados()).toBeTrue();
-    expect(usr2.todosDesplegados()).toBeTrue();
-    expect(partida.flotasDesplegadas()).toBeTrue();
+});
 
 
-  });
-
-  it("Comprobar jugada que Pepe gana", function() {
-    expect(partida.turno.nick).toBeEquals("pepe");
-
-    us1.disparar(0,0);
-	  us1.disparar(1,0);
-
-	  us1.disparar(0,1);
-	  us1.disparar(1,1);
-	  us1.disparar(2,1);
-	  us1.disparar(3,1);
-
-    expect(partida.turno.jugadores).toEqual(0);
-    expect(partida.esFinal()).toBeTrue();
-
-
-
-
-  });
-
-  it("Comprobar el cambio de turno", function() {
-    us1.disparar(2,0);
-
-    expect(partida.turno.jugadorSeUneAPartida).toEqual(1);
-
-
-  });
-
-})
 
