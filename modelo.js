@@ -183,6 +183,7 @@ function Usuario(nick,juego){
     this.juego=juego;  //Usuario conoce la clase Juego
     this.tableroPropio;
     this.tableroRival;
+    this.partida;
     this.flota=[];
 
     /**
@@ -207,9 +208,9 @@ function Usuario(nick,juego){
      * @param {ing} dim Tamaño del tablero (x*x)
      */
     this.inicializarTableros=function(dim){
-        this.tableroPropio=new Tablero(dim);
-        this.tableroRival=new Tablero(dim);
-    }
+		this.tableroPropio=new Tablero(dim);
+		this.tableroRival=new Tablero(dim);
+	}
 
     /**
      * Inicializa los barcos de la partida.
@@ -314,7 +315,7 @@ function Partida(codigo, usr){
      * @param {String} usr Nombre del usuario
      * @returns {JSON} Codigo de la partida
      */
-    this.agregarJugador=function(usr){
+    this.agregarJugador=function(usr){ //this.puedeAgregar.Jugador
         let res=this.codigo;
         if (this.hayHueco()){
             this.jugadores.push(usr);
@@ -477,10 +478,30 @@ function Partida(codigo, usr){
      */
     this.agregarJugador(this.owner);
 
+
+    function Inicial(){
+        this.nombre="inicial";
+    }
+    
+    function Desplegando(){
+        this.nombre="desplegando";
+    }
+
+    function Jugando(){
+        this.nombre="jugando";
+    }
+
+    function Final(){
+        this.nombre="final";
+    }
+
     /////////////////////////////////////////////////////////////////////////
     //TABLERO
     /////////////////////////////////////////////////////////////////////////
-    /**@function tablero */
+    /**
+     * @function Tablero
+     * @param {int} size Tamaño del tablero
+     */
     function Tablero(size){
         this.size=size; //filas = columnas
         this.casillas;
@@ -658,6 +679,7 @@ function Partida(codigo, usr){
             this.estado="agua";
         }
     }
+
 
 
 
